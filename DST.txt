@@ -1,0 +1,15 @@
+Canine Parvovirus: Severe vomiting, bloody diarrhea, lethargy: Metoclopramide, Antibiotics, IV fluids  
+Distemper: Coughing, nasal discharge, seizures: Amoxicillin, Doxycycline, IV fluids  
+Hip Dysplasia: Lameness, pain when rising, decreased activity: Carprofen, Glucosamine, Omega-3 supplements  
+Feline Leukemia Virus (FeLV): Weight loss, pale gums, persistent fever: Prednisolone, Interferon, Antiviral drugs  
+Feline Immunodeficiency Virus (FIV): Swollen lymph nodes, loss of appetite: AZT, Interferon, Antibiotics for secondary infections  
+Feline Lower Urinary Tract Disease (FLUTD): Straining to urinate, bloody urine, frequent urination: Amoxicillin, Prazosin, Special urinary diet  
+Pneumonia: Coughing, nasal discharge, labored breathing: Oxytetracycline, Penicillin, Tylosin  
+Foot Rot: Lameness, swollen feet, foul odor: Zinc sulfate footbaths, Penicillin, Tetracycline spray  
+Enterotoxemia (Pulpy Kidney Disease): Sudden death, diarrhea, abdominal pain: Antitoxin serum, Probiotics, Electrolyte therapy    
+Myxomatosis: Swollen eyelids, discharge, lethargy: Supportive care, antibiotics, vaccination  
+Pasteurellosis (Snuffles): Sneezing, nasal discharge, watery eyes: Antibiotics, clean environment  
+GI Stasis: Loss of appetite, bloating, reduced feces: Fluids, gut motility drugs, high-fiber diet    
+Psittacosis (Parrot Fever): Nasal discharge, lethargy, green diarrhea: Doxycycline, Enrofloxacin, Azithromycin  
+Feather Plucking: Bald spots, irritated skin, excessive preening: Behavioral therapy, Omega-3 supplements, Antihistamines  
+Aspergillosis: Difficulty breathing, lethargy, loss of appetite: Itraconazole, Amphotericin B, Voriconazole  

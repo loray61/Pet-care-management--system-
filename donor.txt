@@ -1,0 +1,4 @@
+Donor: sora  amount: 456
+Donor: tara   amount: 123  RS
+Donor: sora  amount: 22  RS
+Donor: lara  amount: 56  RS

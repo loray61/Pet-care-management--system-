@@ -1,6 +1,6 @@
 #include <iostream>
 #include <conio.h>
-#include <string>
+
 #include <cstring>
 #include <iomanip>
 #include <windows.h>
@@ -8,37 +8,10 @@
 using namespace std;
 
 
-
-
-struct systemPetData{
-string petNames[5]={"dog", "cat", "goat", "rabbit", "parrot"};
-string petArt[5] = {"▼ ᴥ ▼", " =^.^= ", "\\ᐠ-ꞈ-ᐟ/", "₍ᐢ.w.ᐢ₎", "⋆.˚(\\(o/\\o)/)"};
-string vaccinations[5];
-string prescription[5];
-string quiz[3];
-
-};
-
-struct petHealth{
-        string diseases[3];
-        string symptoms[3];
-        string treatment[3];
-        string schedule[3];
-        string grooming[3];
-        
-    };
-
-struct donation{
-   char amount[10];
-   string* arr;
-};
-
-
-
 void gotoxy(int x, int y);
 void clearArea(int j);
 void splashCat();
-bool flag = false;
+
 
 
 void printHeader();
@@ -49,38 +22,30 @@ void mainMenu();
 void submenu4();
 void showPets();
 
-
-string toLowerCase(string X);
-int findPet(string []);
+bool checkupfee(int);
 int appointment();
 int intValidation();
-bool checkupfee(int);
+int moneyValidation();
 
+string toLowerCase(string X);
 string replace(string mainStr, string replaceStr, string newStr);
-bool saveData(petHealth( & pet)[5]);
-void loadVacNPresNQuiz(systemPetData & p);
-void petCheckup( petHealth (&p)[5], systemPetData & x);
-void petSchedule(petHealth (sch)[5],systemPetData pet);
-void petGrooming(petHealth( & v)[5],systemPetData & u);
-void feedQuiz(systemPetData pet);
-void vacPres(systemPetData & y);
-void addDst( petHealth(&p)[5]);
-void vacPres(systemPetData & y);
-void updateDst( petHealth(&p)[5],systemPetData &data );
-void deleteDst( petHealth(&p)[5], systemPetData(&data));
-string *donors(donation don,int &count);
-bool saveDonorData(donation don , int count);
-bool loadSchedule(petHealth (& sch)[5]);
-bool loadGroomData(petHealth (& gr)[5]);
 
-
-
-
-
-
-
-
-
+int findPet(string petNames[], int n);
+void loadVacNPresNQuiz(string vac[], string pres[], string arr[]);
+void petSchedule(string petNames[], int n, string arr[][3]);
+void petGrooming(string petNames[], int n, string groom[][3]);
+void feedQuiz(string petNames[], string quiz[], int n);
+void vacPres(string petNames[], int n, string vac[], string pres[]);
+void loadDst( string diseases[][3], string symptoms[][3], string treatment[][3], int n);
+void updateDst(string petNames[], string diseases[][3], string symptoms[][3], string treatment[][3], int n);
+void deleteDst(string petNames[], string diseases[][3], string symptoms[][3], string treatment[][3], int n);
+void petCheckup(string petNames[], string diseases[][3], string symptoms[][3], string treatment[][3], int n);
+bool saveData(string petNames[], string diseases[][3], string symptoms[][3], string treatment[][3], int n);
+string * donors(char amount[][10], int &count);
+bool saveDonorData(string *donors, char amount[][10], int count);
+bool loadSchedule(string schedule[][3], int n);
+bool loadGroomData(string groom[][3], int n);
+bool loadDonorData(string *donors, char amount[][10]);
 
 int main()
 {
@@ -90,13 +55,38 @@ int main()
     int op = -1;
     int amount=0, choice;
     string id = "", pwd = "";
+    const int MAX_PETS = 5;
 
-    systemPetData newPet;    
-    petHealth pets[5];
-    donation don;   
+    string schedule[MAX_PETS][3];
 
-    addDst(pets);
-    loadVacNPresNQuiz(newPet);
+    string grooming[MAX_PETS][3]; // Grooming suggestion array for pets of particular type
+
+    string petNames[MAX_PETS] = {"dog", "cat", "goat", "rabbit", "parrot"};
+    string pets[MAX_PETS] = {"▼ ᴥ ▼", " =^.^= ", "\\ᐠ-ꞈ-ᐟ/", "₍ᐢ.w.ᐢ₎", "⋆.˚(\\(o/\\o)/)"};
+
+    string vaccinations[MAX_PETS];
+    string prescription[MAX_PETS];
+
+    string diseases[MAX_PETS][3];
+    string symptoms[MAX_PETS][3];
+    string treatment[MAX_PETS][3];
+    string quiz[3];
+    char donAmount[10][10];
+    for (int i = 0; i < MAX_PETS; i++)
+    {
+        for (int j = 0; j < 3; j++)
+        {
+            diseases[i][j] = "";
+            symptoms[i][j] = "";
+            treatment[i][j] = "";
+        }
+    }
+    //Dst = D:Diseases - s:symptoms - t: treatment
+    loadDst( diseases, symptoms, treatment, MAX_PETS);
+    loadVacNPresNQuiz(vaccinations, prescription, quiz);
+    loadSchedule(schedule, MAX_PETS);
+    loadGroomData(grooming, MAX_PETS);
+   
     printHeader();
     splashCat();
    
@@ -106,7 +96,6 @@ int main()
         system("CLS");
         cout << endl;
         printHeader();
-
         gotoxy(45, 57);
         mainMenu();
         choice=intValidation();
@@ -125,7 +114,7 @@ int main()
                 gotoxy(45, 68);
                 cout << "Loading.......";
                 Sleep(3000);
-                clearArea(65);
+               // clearArea(65);
                 if (id == "1" && pwd == "1")
                 {
                     bool loggedIn = true;
@@ -147,20 +136,22 @@ int main()
 
                         case 2:
                         {
-                             updateDst(pets,newPet);
+                            updateDst(petNames, diseases, symptoms, treatment, MAX_PETS);
                             
                             break;
                         }
                         case 3:
                         {
-                           deleteDst(pets,newPet);
+                            deleteDst(petNames, diseases, symptoms, treatment, MAX_PETS);
                           
                             break;
                         }
                         case 4:
                         {
-                            amount = appointment();
-                       
+                            //amount = appointment();
+                            gotoxy(45,66);
+                            cout<<"Set up appointment fee";
+                            amount=moneyValidation();
                             break;
                         }
                         case 0:
@@ -169,7 +160,7 @@ int main()
                             cout << " Administrator is logged out" << endl;
                             cout << " Loading back.......";
 
-                           // Sleep(3000); uncomment after fixing issues 
+                            Sleep(3000); 
                             clearArea(65);
                             loggedIn = false;
                             break;
@@ -214,13 +205,13 @@ int main()
                         {
                         case 1:
                         {
-                             petCheckup(pets ,newPet);
+                            petCheckup(petNames, diseases, symptoms, treatment, MAX_PETS);
                             
                             break;
                         }
                         case 2:
                         {
-                       vacPres(newPet);
+                            vacPres(petNames, MAX_PETS, vaccinations, prescription);
                           
                             break;
                         }
@@ -231,7 +222,6 @@ int main()
                         }
                         default:
                         {
-                        
                             break;
                         }
                         }
@@ -243,24 +233,24 @@ int main()
 
                 cout << endl;
                 subMenu3();
-                op=intValidation();
+                 op=intValidation();
                 switch (op)
                 {
                 case 1:
                 {
-                    feedQuiz(newPet);
+                    feedQuiz(petNames, quiz, MAX_PETS);
                
                     break;
                 }
                 case 2:
                 {
-                    petGrooming(pets,newPet);
+                    petGrooming(petNames, MAX_PETS, grooming);
                     
                     break;
                 }
                 case 3:
                 {
-                     petSchedule(pets,newPet);
+                    petSchedule(petNames, MAX_PETS, schedule);
                    
                     break;
                 }
@@ -270,7 +260,7 @@ int main()
                 }
                 default:
                 {
-                    // cout << "Invalid choice ";
+                    cout << "Invalid choice ";
                     break;
                 }
                 }
@@ -286,23 +276,21 @@ int main()
                     showPets();
                     gotoxy(45, 70);
                     cout << "Select your desired pet then \n";
-                    int index = findPet(newPet.petNames);
+                    int index = findPet(petNames, 5);
                     gotoxy(45, 72);
-                    cout << "Here is your " << newPet.petNames[index] << " " << newPet.petArt[index] << endl;
+                    cout << "Here is your " << petNames[index] << " " << pets[index] << endl;
                     getch();
                     break;
                 }
                 case 2:
                 {
-                    don.arr = donors(don,count);
-                    saveDonorData(don, count);
+                    string *arr = donors(donAmount, count);
+                    saveDonorData(arr, donAmount, count);
                 }
                 
                     
                 default:
-                  {  
-                    break;
-                  }
+                  {  break;}
                 }
             }
             else
@@ -314,14 +302,9 @@ int main()
         op = -1;
     } while (choice != 0);
     choice = -1;
-    saveData(pets);
-    
+    saveData(petNames, diseases, symptoms, treatment, MAX_PETS);
     return 0;
 }
-
-
-     
-
 
 void gotoxy(int x, int y)
 {
@@ -378,7 +361,7 @@ void subMenu1()
 
 void subMenu2()
 {
-    int j = 61;
+
     printHeader();
     gotoxy(45, 58);
     cout << "1.Match symptoms to get Treatment " << endl;
@@ -387,7 +370,7 @@ void subMenu2()
     gotoxy(45, 60);
     cout << "0.Exit: ";
     cout << endl;
-    gotoxy(45, j);
+    gotoxy(45, 61);
   
 }
 
@@ -428,23 +411,22 @@ void submenu4()
 
  int intValidation(){
 
+    int input;   
+    
+    while(true)
+    { 
+        cout<<"Choose the option(integer): ";
+        cin>>input;
+            if(!cin)
+        {
 
-     int input;
-  
-while(true)
-   { 
-      cout<<"Choose the option(integer): ";
-      cin>>input;
-        if(!cin)
-    {
-
-            cin.clear();
-            cin.ignore(256,'\n');
-    }
-    else 
-    break;
-    }
-    return input;
+                cin.clear();
+                cin.ignore(256,'\n');
+        }
+        else 
+        {  break;}
+        }
+        return input;
 }
 
 
@@ -471,7 +453,7 @@ void printHeader()
 
 void splashCat()
 {
-   //Displays the cat on start of screen for few seconds
+   //Displays the cta on start of screen for few seconds
     gotoxy(45, 58);
     cout << "              :● :':         ;': ●  : " << endl;
     gotoxy(45, 59);
@@ -502,13 +484,13 @@ void splashCat()
     gotoxy(49, 72);
     cout << "Loading.......";
     cout.flush();
-   // Sleep(3500); // uncomment when done fhandling
+    Sleep(3500); // uncomment when done fhandling
     system("cls");
 }
 
 
 
-void loadVacNPresNQuiz(systemPetData (& p))
+void loadVacNPresNQuiz(string vaccinations[], string prescription[], string arr[])
 {    //Loads Vaccination ,prescripton and pet quiz data from file
     ifstream fin("VacnPres.txt");
     if (!fin)
@@ -517,19 +499,19 @@ void loadVacNPresNQuiz(systemPetData (& p))
     }
     for (int i = 0; i < 5; i++)
     {
-        getline(fin, p.vaccinations[i], ',');
-        getline(fin, p.prescription[i]);
+        getline(fin, vaccinations[i], ',');
+        getline(fin, prescription[i]);
     }
     fin.ignore(256, '\n');
 
     for (int i = 0; i < 3; i++)
-        getline(fin, p.quiz[i], ',');
+        getline(fin, arr[i], ',');
     fin.close();
 }
 
 
 
-string *donors(donation don,int &count)
+string *donors(char amount[][10], int &count)
 {
     string *donors = new string[40];
     for (int i = 0; i < 40; i++)
@@ -539,7 +521,7 @@ string *donors(donation don,int &count)
     cout << "Enter your name: ";
     getline(cin, donors[count]);
     cout << "Enter the amount(RS) you want to donate to  Pet Care Management System: ";
-    cin >>don.amount ;
+    cin >> amount[count];
     count++;
 
     return donors;
@@ -547,16 +529,16 @@ string *donors(donation don,int &count)
 
 
 
-bool saveDonorData(donation don , int count)
+bool saveDonorData(string *donors, char amount[][10], int count)
 {
     ofstream fout("donor.txt",ios::app);
 
     if (!fout)
-        return false;
+       { return false;}
     
     for (int i = 0; i < count; i++)
-    {   if(don.arr[i]!="")
-        fout << "Donor: " << don.arr[i] << "  amount: " << don.amount[i] <<"  RS"<< endl;
+    {   if(donors[i]!="")
+        fout << "Donor: " << donors[i] << "  amount: " << amount[i] <<"  RS"<< endl;
     }
 
     fout.close();
@@ -567,25 +549,24 @@ bool saveDonorData(donation don , int count)
 
 
 
-bool loadGroomData(petHealth (& gr)[5])
+bool loadGroomData(string groom[][3], int n)
 {
-
     fstream fin("Groom.txt");
     if (!fin)
     {
         cout << "Groom file can't be opened  ";
         return false;
     }
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < n; i++)
     {
         for (int j = 0; j < 3; j++)
         {
             if (j == 2)
             {
-                getline(fin, gr[i].grooming[2]);
+                getline(fin, groom[i][2]);
             }
             else
-                getline(fin, gr[i].grooming[j], ',');
+                getline(fin, groom[i][j], ',');
         }
     }
 
@@ -595,24 +576,24 @@ bool loadGroomData(petHealth (& gr)[5])
 
 
 
-bool loadSchedule(petHealth (& sch)[5])
+bool loadSchedule(string schedule[][3], int n)
 {
     fstream fin("Schedule.txt");
     if (!fin)
     {
         cout << "Schedule file can't be opened  ";
-        return false; 
+        return false;
     }
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < n; i++)
     {
         for (int j = 0; j < 3; j++)
         {
             if (j == 2)
             {
-                getline(fin, sch[i].schedule[2]);
+                getline(fin, schedule[i][2]);
             }
             else
-                getline(fin, sch[i].schedule[j], ',');
+                {getline(fin, schedule[i][j], ',');}
         }
     }
 
@@ -622,15 +603,15 @@ bool loadSchedule(petHealth (& sch)[5])
 
 
 
-int findPet(string arr[])
+int findPet(string petNames[], int n)
 {
     string x;
     cout << "Enter pet name ";
     cin >> x;
 
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < n; i++)
     {
-        if (toLowerCase(x) == arr[i])
+        if (toLowerCase(x) == petNames[i])
         {
             return i;
         }
@@ -640,9 +621,9 @@ int findPet(string arr[])
 
 
 
-void addDst( petHealth(&p)[5])
-{       // DST=diseses-symptoms-treatments                  
-       // function to add diseases
+void loadDst( string diseases[][3], string symptoms[][3], string treatment[][3], int n)
+{      // DST=diseses-symptoms-treatments                  
+      // function to add diseases
     ifstream fin;
     fin.open("DST.txt");
     if (!fin)
@@ -651,52 +632,31 @@ void addDst( petHealth(&p)[5])
      
     }
 
-    for (int j = 0; j < 5; j++)
+    for (int j = 0; j < n; j++)
     {
         for (int i = 0; i < 3; i++)
         {
             
-            getline(fin, p[j].diseases[i], ':');
+            getline(fin, diseases[j][i], ':');
        
-            getline(fin, p[j].symptoms[i], ':');
+            getline(fin, symptoms[j][i], ':');
 
-            getline(fin, p[j].treatment[i]);
+            getline(fin, treatment[j][i]);
 
             cout << endl;
         }
     }
    
-
-   for (int i = 0; i < 5; i++)
-    {
-        for (int j = 0; j < 3; j++)
-        {
-            
-          cout<<  p[i].diseases[j]<<" ";
-       
-           cout<<p[i].symptoms[j]<<" ";
-
-            cout<<p[i].treatment[j]<<" ";
-
-            cout << endl;
-        }
-    }
-
-
-
-
     fin.close();
 }
- 
 
 
-void updateDst( petHealth(&p)[5], systemPetData & z)
-{
-// DST=diseses-symptoms-treatments   
-// function to update diseases
 
+void updateDst(string petNames[], string diseases[][3], string symptoms[][3], string treatment[][3], int n)
+{ // DST=diseses-symptoms-treatments   
+ // function to update diseases
     string dis;
-    int index = findPet(z.petNames);
+    int index = findPet(petNames, n);
     if (index != -1)
     {    cout << "Enter the name of disease to update ";
 
@@ -706,20 +666,20 @@ void updateDst( petHealth(&p)[5], systemPetData & z)
 
     for (int i = 0; i < 3; i++)
     {
-        if (dis == p[index].diseases[i])
+        if (dis == diseases[index][i])
         {
             flag = true;
-            cout << "Enter the name of new disease to be updated for " <<z.petNames[index] << " : ";
-            getline(cin,  p[index].diseases[i]);
+            cout << "Enter the name of new disease to be updated for " << petNames[index] << " : ";
+            getline(cin, diseases[index][i]);
 
-            cout << "Enter corresponding symptom of " <<  p[index].diseases[i] << " : ";
-            getline(cin, p[index].symptoms[i]);
+            cout << "Enter corresponding symptom of " << diseases[index][i] << " : ";
+            getline(cin, symptoms[index][i]);
 
-            cout << "Enter corresponding treatment of " << p[index].diseases[i] << " : ";
+            cout << "Enter corresponding treatment of " << diseases[index][i] << " : ";
 
-            getline(cin, p[index].treatment[i]);
+            getline(cin, treatment[index][i]);
             cout << endl;
-            cout << "Disease: " << p[index].diseases[i] << ", Symptom: " << p[index].symptoms[i] << ", Treatment: " << p[index].treatment[i] << endl;
+            cout << "Disease: " << diseases[index][i] << ", Symptom: " << symptoms[index][i] << ", Treatment: " << treatment[index][i] << endl;
         }
     }
      if (!flag)
@@ -734,11 +694,11 @@ void updateDst( petHealth(&p)[5], systemPetData & z)
 
 
 
-void deleteDst( petHealth(&p)[5], systemPetData(&data))
+void deleteDst(string petNames[], string diseases[][3], string symptoms[][3], string treatment[][3], int n)
 {
     bool flag = false;
     string dis;
-    int index = findPet(data.petNames);
+    int index = findPet(petNames, n);
     if (index != -1)
   {      
     cout << "Enter the name of disease to delete ";
@@ -746,35 +706,50 @@ void deleteDst( petHealth(&p)[5], systemPetData(&data))
     getline(cin, dis);
     for (int i = 0; i < 3; i++)
     {
-        if (dis ==p[index].diseases[i])
+        if (dis == diseases[index][i])
         {
             flag = true;
 
-            p[index].diseases[i] = "";
-            p[index].symptoms[i] = "";
-            p[index].treatment[i] = "";
-            
-            cout <<"Information deleted successfully ";
+            diseases[index][i] = "";
+            symptoms[index][i] = "";
+            treatment[index][i] = "";
+
+            cout << "Information deleted successfully ";
         }
     }
     if (!flag)
-    {   cout << "Disease not found ";}}
+    {   cout << "Disease not found ";}
  else
   {  cout<<"This pet does not exist in system.";}
-
-
+}
 getch();
 }
 
 
-int appointment()
-{
-    int apFee;
-    gotoxy(45, 66);
-    cout << "Enter appointment fee to be paid by user: ";
-    cin >> apFee;
-    return apFee;
+
+ int moneyValidation(){
+
+    int input;   
+    
+    while(true)
+    { 
+        cout<<"Enter amount: ";
+        cin>>input;
+            if(!cin)
+        {
+
+                cin.clear();
+                cin.ignore(256,'\n');
+        }
+        else 
+        {  break;}
+        }
+        return input;
 }
+
+
+
+
 
 
 
@@ -782,14 +757,12 @@ bool checkupfee(int fee)
 {
     int x;
 
-       
-        
-            gotoxy(45, 62);
-        cout << "Enter your appointment fee ";
-        cin >> x;
+        gotoxy(45, 62);
+        cout <<" Appointment fee set up by admin is"<<fee<<endl;
+        x=moneyValidation();
             if (x >= fee)
         {
-              cout << "You can have your pet's checkup.";
+              cout <<" You can have your pet's checkup.";
               return true;
         }
         else
@@ -797,10 +770,9 @@ bool checkupfee(int fee)
           
             cout << "You can't have your pet checkup.Please enter the exact appointment fee.\n ";
             Sleep(2000);
-            clearArea(62);
+            system("cls");
             checkupfee(fee);
-            getch();
-}
+        }
         
     }
 
@@ -821,13 +793,13 @@ void showPets()
 
 
 
-void vacPres(systemPetData & y)
+void vacPres(string petNames[], int n, string vac[], string pres[])
 {
-    int index = findPet(y.petNames);
+    int index = findPet(petNames, n);
     if (index != -1)
     {
-        cout << "Vaccination: " << y.vaccinations[index]<< endl;
-        cout << "Prescription: " << y.prescription[index] << endl;
+        cout << "Vaccination: " << vac[index] << endl;
+        cout << "Prescription: " << pres[index] << endl;
     }
     else
   {      cout << "Pet not found! \n";}
@@ -836,14 +808,14 @@ void vacPres(systemPetData & y)
 
 
 
-void petGrooming(petHealth( & v)[5],systemPetData & u)
+void petGrooming(string petNames[], int n, string groom[][3])
 {
-    int index = findPet(u.petNames);
+    int index = findPet(petNames, n);
     if (index != -1)
     {
         for (int i = 0; i < 3; i++)
         {
-            cout << i + 1 << " . " << v[index].grooming[i] << endl;
+            cout << i + 1 << ". " << groom[index][i] << endl;
         }
     }
     getch();
@@ -851,15 +823,14 @@ void petGrooming(petHealth( & v)[5],systemPetData & u)
 
 
 
-void petSchedule(petHealth ( sch)[5],systemPetData pet)
-
+void petSchedule(string petNames[], int n, string arr[][3])
 {
-    int index = findPet(pet.petNames);
+    int index = findPet(petNames, n);
     if (index != -1)
     {
         for (int i = 0; i < 3; i++)
         {
-            cout << i + 1 << ". " << sch[index].schedule[i] << endl;
+            cout << i + 1 << ". " << arr[index][i] << endl;
         }
     }
     getch();
@@ -867,17 +838,18 @@ void petSchedule(petHealth ( sch)[5],systemPetData pet)
 
 
 
-void feedQuiz(systemPetData pet)
+
+void feedQuiz(string petNames[], string quiz[], int n)
 {
 
     int count = 0;
     string x;
-    int index = findPet(pet.petNames);
+    int index = findPet(petNames, n);
     if (index != -1)
     {
         for (int i = 0; i < 3; i++)
         {
-            cout << i + 1 << ". " << replace(pet.quiz[i], "pet", pet.petNames[index]) << " (Yes/No):  \n";
+            cout << i + 1 << ". " << replace(quiz[i], "pet", petNames[index]) << " (Yes/No):  \n";
               cin >> x;
             while (true)
             {
@@ -901,14 +873,14 @@ void feedQuiz(systemPetData pet)
         }
 
         if (count == 3)
-           { cout << "Your " << pet.petNames[index] << " feeding is perfect.Good job!";}
+           { cout << "Your " << petNames[index] << " feeding is perfect.Good job!";}
 
         else if (count == 2)
-          {  cout << "Your " << pet.petNames[index] << " feeding is well.A slight improvemnt will do the work";}
+          {  cout << "Your " << petNames[index] << " feeding is well.A slight improvemnt will do the work";}
         else if (count == 1)
           {   cout << "Poor feeding";}
         else
-          {   cout << "You want your " << pet.petNames[index] << " to die ?Dont you?";}
+          {   cout << "You want your " << petNames[index] << " to die ?Dont you?";}
     }
     else
          { cout << "Pet not found";}
@@ -932,7 +904,7 @@ string toLowerCase(string X)
 
 string replace(string mainStr, string replaceStr, string newStr)
 {
-    string emp ="";
+    string emp = "";
     size_t i = 0;
     while (i < mainStr.length())
     {
@@ -941,10 +913,10 @@ string replace(string mainStr, string replaceStr, string newStr)
         {
             if (mainStr[i + k] != replaceStr[k])
             {
-                break;
+                break;  
             }
         }
-        if (k == replaceStr.length())
+        if (k == replaceStr.length())   
         {
             emp += newStr;
             i += replaceStr.length();
@@ -961,32 +933,34 @@ string replace(string mainStr, string replaceStr, string newStr)
 
 
 
-void petCheckup( petHealth (&p)[5],systemPetData & x)
+void petCheckup(string petNames[], string diseases[][3], string symptoms[][3], string treatment[][3], int n)
 {
-    int index = findPet(x.petNames);
+    int index = findPet(petNames, n);
     int no=0;
     bool flag=false;
+
     if (index != -1 )
-    {   
-        int indices[3];
-        cout << "Choose a symptom you observe in your " << x.petNames[index] << " \n";
+    {   int indices[3];
+        cout << "Choose a symptom you observe in your " << petNames[index] << " \n";
         for (int i = 0; i < 3; i++)
-            {if(p[index].symptoms[i]!="")
-              {flag=true;
+        {
+            if(symptoms[index][i]!="")
+            {  flag=true;
               indices[no]=i;
-            cout << no+1 << "." << p[index].symptoms[i] << endl;
+            cout << no + 1 << "." << symptoms[index][i] << endl;
             no++;
             }
             }
+
         int choice;
         cin >> choice;
         choice = indices[choice - 1];
 
-        cout << "Your " << x.petNames[index] << " suffers from "  << p[index].diseases[choice] << endl;
-        cout << "Treatment for your " << x.petNames[index] << " is " << p[index].treatment[choice] << endl;
+        cout << "Your " << petNames[index] << " suuffers from " << diseases[index][choice] << endl;
+        cout << "treatment for your " << petNames[index] << " is " << treatment[index][choice] << endl;
     }
 
-    else if (!flag)
+    else if (diseases[index][0] == "")
     {
         cout << "Admin has not yet added medical information ";
     }
@@ -1004,12 +978,16 @@ void clearArea(int j)
     for (int i = j; i < (j + 20); i++)
     {
         gotoxy(0, i);
-        cout << string(120, ' ');
+        for(int i=0;i<120;i++)
+        {
+            cout<<' ';
+        }
     }
 }
 
 
-bool saveData(petHealth( & pet)[5]){
+
+bool saveData(string petNames[], string diseases[][3], string symptoms[][3], string treatment[][3], int n){
     ofstream fout("DST.txt");
     if (!fout)
     {
@@ -1018,16 +996,17 @@ bool saveData(petHealth( & pet)[5]){
     }
     for(int i=0;i<5;i++){
         for(int j=0;j<3;j++){
-            if(!(pet[i].diseases[j]==""))
+            if(!(diseases[i][j]==""))
             {
-            fout<<pet[i].diseases[j]<<":";
-            fout<<pet[i].symptoms[j]<<":";
-            fout<<pet[i].treatment[j]<<endl;
+            fout<<diseases[i][j]<<":";
+            fout<<symptoms[i][j]<<":";
+            fout<<treatment[i][j]<<endl;
             } 
-            else if((pet[i].diseases[j]==""))
-            {fout<<pet[i].diseases[j]<<":";
-            fout<<pet[i].symptoms[j]<<":";
-            fout<<pet[i].treatment[j]<<endl;
+
+            else if((diseases[i][j]==""))
+            {fout<<diseases[i][j]<<":";
+            fout<<symptoms[i][j]<<":";
+            fout<<treatment[i][j]<<endl;
 }
         }
     }
